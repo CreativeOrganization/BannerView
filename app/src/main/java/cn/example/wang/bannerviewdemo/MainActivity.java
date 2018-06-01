@@ -17,6 +17,7 @@ import cn.example.wang.bannermodule.view.BannerView;
 
 public class MainActivity extends AppCompatActivity {
 
+    //添加注释
     BannerView bannerView;
     List<String> imageurls;
     List<Integer> recLists;
