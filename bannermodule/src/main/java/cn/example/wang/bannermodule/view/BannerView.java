@@ -37,8 +37,15 @@ import cn.example.wang.bannermodule.transformer.ABaseTransformer;
 
 public class BannerView extends FrameLayout {
 
-    private int addViewCount = 4;
-    private int addNumber = 2;
+    /*
+    * 默认将图片集合手动扩容四张图片,配合轮播
+    * */
+    private final int EXPAND_SOURCE_ALL=4;
+
+    /*
+    * 图片集合单侧扩容的数量
+    * */
+    private final int EXPAND_SOURCE_ONE_SIDE=2;
 
     public BannerView(Context context) {
         super(context);
@@ -92,7 +99,7 @@ public class BannerView extends FrameLayout {
     }
 
     public BannerView setViewPagerOffscreenPageLimit(int mOffscreenPageLimit) {
-        this.mOffscreenPageLimit = mOffscreenPageLimit + addViewCount;
+        this.mOffscreenPageLimit = mOffscreenPageLimit + EXPAND_SOURCE_ALL;
         return this;
     }
 
@@ -218,12 +225,8 @@ public class BannerView extends FrameLayout {
 
     public void reset(List<String> imageUrl) {
         if (null == imageUrl) return;
-        if (mOffscreenPageLimit >= (imageUrl.size() + addViewCount)) {
-            mOffscreenPageLimit = imageUrl.size() + 4;
-        }
-        if (mStartPosition >= imageUrl.size()) {
-            mStartPosition = 2;
-        }
+        mOffscreenPageLimit = imageUrl.size() + EXPAND_SOURCE_ALL;
+        mStartPosition = EXPAND_SOURCE_ONE_SIDE;
         isRestData = true;
         clearData();
         this.mImagUrls.addAll(imageUrl);
@@ -297,7 +300,7 @@ public class BannerView extends FrameLayout {
         if (mCount <= 0) {
             throw new NullPointerException("Error  图片资源为空");
         }
-        for (int i = 0; i < mCount + addViewCount; i++) {
+        for (int i = 0; i < mCount + EXPAND_SOURCE_ALL; i++) {
             if (null == mImageLoad) {
                 mImageLoad = getImageLoad();
             }
@@ -308,17 +311,18 @@ public class BannerView extends FrameLayout {
             }
             ImageView imageView = (ImageView) child;
             Object url;
+            //在数据源首位都重复添加两张图片,优化连贯自动轮播效果
             if (i == 0) {
                 //最后一张图片
-                url = data.get(data.size() - addNumber);
+                url = data.get(data.size() - EXPAND_SOURCE_ONE_SIDE);
             } else if (i == 1) {
                 url = data.get(data.size() - 1);
-            } else if (i == mCount + addNumber) {
+            } else if (i == mCount + EXPAND_SOURCE_ONE_SIDE) {
                 url = data.get(0);
             } else if (i == mCount + 3) {
                 url = data.get(1);
             } else {
-                url = data.get(i - addNumber);
+                url = data.get(i - EXPAND_SOURCE_ONE_SIDE);
             }
             if (null != url) {
                 if (url instanceof String) {
@@ -349,7 +353,7 @@ public class BannerView extends FrameLayout {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                int realPosition = position - addNumber;
+                int realPosition = position - EXPAND_SOURCE_ONE_SIDE;
                 //总会先走一次
                 if (hasWindowFocus() && meOnPagerChangeListener != null) {
                     meOnPagerChangeListener.onPageScrolled(realPosition, positionOffset, positionOffsetPixels);
@@ -382,16 +386,16 @@ public class BannerView extends FrameLayout {
                     case ViewPager.SCROLL_STATE_IDLE:
                         if (mCurrentPosition == 1) {
                             mViewPager.setCurrentItem(mCount + 1, false);
-                        } else if (mCurrentPosition == mCount + addNumber) {
-                            mViewPager.setCurrentItem(addNumber, false);
+                        } else if (mCurrentPosition == mCount + EXPAND_SOURCE_ONE_SIDE) {
+                            mViewPager.setCurrentItem(EXPAND_SOURCE_ONE_SIDE, false);
                         }
                         break;
                     //SCROLL_STATE_DRAGGING
                     case ViewPager.SCROLL_STATE_DRAGGING: //开始
                         if (mCurrentPosition == 1) {
                             mViewPager.setCurrentItem(mCount + 1, false);
-                        } else if (mCurrentPosition == mCount + addNumber) {
-                            mViewPager.setCurrentItem(addNumber, false);
+                        } else if (mCurrentPosition == mCount + EXPAND_SOURCE_ONE_SIDE) {
+                            mViewPager.setCurrentItem(EXPAND_SOURCE_ONE_SIDE, false);
                         }
                         break;
                     //SCROLL_STATE_SETTLING
@@ -407,7 +411,7 @@ public class BannerView extends FrameLayout {
     }
 
     private int getRealPosition(int position) {
-        int realPosition = (position - addNumber) % mCount;
+        int realPosition = (position - EXPAND_SOURCE_ONE_SIDE) % mCount;
         if (realPosition < 0) {
             realPosition += mCount;
         }
@@ -418,9 +422,9 @@ public class BannerView extends FrameLayout {
         @Override
         public void run() {
             if (mCount > 1 && isAutoPlay) {
-                mCurrentPosition = mCurrentPosition % (mCount + addNumber) + 1;
+                mCurrentPosition = mCurrentPosition % (mCount + EXPAND_SOURCE_ONE_SIDE) + 1;
                 if (mCurrentPosition == 1) {
-                    mViewPager.setCurrentItem(addNumber, false);
+                    mViewPager.setCurrentItem(EXPAND_SOURCE_ONE_SIDE, false);
                     mHandler.post(mRunnable);
                 } else {
                     mViewPager.setCurrentItem(mCurrentPosition);
@@ -440,7 +444,7 @@ public class BannerView extends FrameLayout {
         public Object instantiateItem(ViewGroup container, int position) {
             View view = mViews.get(position);
             container.addView(view);
-            int realPosition = (position - addNumber) % mCount;
+            int realPosition = (position - EXPAND_SOURCE_ONE_SIDE) % mCount;
             mImageLoad.clickListener(view, realPosition, mBannerPagerClickListener);
             return view;
         }
