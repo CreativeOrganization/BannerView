@@ -241,7 +241,7 @@ public class BannerViewLayout extends FrameLayout {
             String tag = (String) child.getTag();
             if (!TextUtils.isEmpty(tag) && mIndicatorTAG.equals(tag) && child instanceof ViewGroup) {
                 mUserIndicator = true;
-                mBaseIndicator.attachBannerView(getContext(), (ViewGroup) child);
+                mBaseIndicator.attachBannerView((ViewGroup) child);
                 return;
             } else {
                 mUserIndicator = false;

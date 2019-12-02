@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import cn.example.wang.bannermodule.base.IBaseIndicator;
+import cn.example.wang.bannerviewdemo.R;
 
 /**
- * Created by WANG on 2018/5/25.
- * 自定义指示器 BannerView不再去管理你的指示器
+ *
+ *
+ * @author WANG
+ * @date 2018/5/25
  */
 
 public class BannerIndicatorManagerImpl implements IBaseIndicator {
@@ -21,21 +24,20 @@ public class BannerIndicatorManagerImpl implements IBaseIndicator {
     private Drawable mDefaultDrawable;
     private ViewGroup mIndicatorContainer;
 
-    private void initRec(Context context, ViewGroup parent) {
-        mDefaultDrawable = context.getResources().getDrawable(cn.example.wang.bannermodule.R.drawable.bg_circle);
-        mSelectedDrawable = context.getResources().getDrawable(cn.example.wang.bannermodule.R.drawable.bg_circle_red);
+    private void initRec(Context context) {
+        mDefaultDrawable = context.getResources().getDrawable(R.drawable.bg_circle);
+        mSelectedDrawable = context.getResources().getDrawable(R.drawable.bg_circle_red);
     }
 
     @Override
-    public void attachBannerView(Context context, ViewGroup parent) {
+    public void attachBannerView(ViewGroup parent) {
         mIndicatorContainer = parent;
-        inflater = LayoutInflater.from(context.getApplicationContext());
-        initRec(context, parent);
+        inflater = LayoutInflater.from(parent.getContext().getApplicationContext());
+        initRec(parent.getContext());
     }
 
     @Override
     public void viewCount(int viewCount) {
-        Log.e("WANG","BannerIndicatorManagerImpl.ViewCount."+viewCount );
         for (int i = 0; i < viewCount; i++) {
             View view = defaultIndicatorLayout(mIndicatorContainer);
             mIndicatorContainer.addView(view);
@@ -45,19 +47,17 @@ public class BannerIndicatorManagerImpl implements IBaseIndicator {
     @SuppressLint("NewApi")
     @Override
     public void preSelectedPage(int preIndex) {
-        Log.e("WANG","BannerIndicatorManagerImpl.preSelectedPage."+preIndex );
         mIndicatorContainer.getChildAt(preIndex).setBackground(mDefaultDrawable);
     }
 
     @SuppressLint("NewApi")
     @Override
     public void currentSelectedPage(int currentIndex) {
-        Log.e("WANG","BannerIndicatorManagerImpl.currentSelectedPage."+currentIndex );
         mIndicatorContainer.getChildAt(currentIndex).setBackground(mSelectedDrawable);
     }
 
     public View defaultIndicatorLayout(ViewGroup parent) {
-        return inflater.inflate(cn.example.wang.bannermodule.R.layout.layout_indicator_default, parent, false);
+        return inflater.inflate(R.layout.layout_indicator_default, parent, false);
     }
 
 }

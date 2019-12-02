@@ -8,7 +8,10 @@ import android.widget.ImageView;
 import cn.example.wang.bannermodule.listener.BannerPagerClickListener;
 
 /**
- * Created by WANG on 2018/5/18.
+ * 将ViewPager中每个界面的View交给使用者去处理，实现该接口，完成相关的逻辑。
+ *
+ * @author WANG
+ * @date 2018/5/18
  */
 
 public interface IBaseImageLoad {
