@@ -1,8 +1,7 @@
-package cn.example.wang.bannermodule.view;
+package cn.example.wang.bannerviewdemo;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -20,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.example.wang.bannermodule.BannerImageLoadImpl;
-import cn.example.wang.bannermodule.R;
 import cn.example.wang.bannermodule.WeakHandler;
 import cn.example.wang.bannermodule.base.IBaseImageLoad;
 import cn.example.wang.bannermodule.base.IBaseIndicator;
 import cn.example.wang.bannermodule.listener.BannerOnPagerChangeListener;
 import cn.example.wang.bannermodule.listener.BannerPagerClickListener;
 import cn.example.wang.bannermodule.transformer.ABaseTransformer;
+import cn.example.wang.bannermodule.view.BannerViewPager;
 
 /**
  * Created by WANG on 2018/5/18.
@@ -35,31 +34,27 @@ import cn.example.wang.bannermodule.transformer.ABaseTransformer;
  * 3.setIndicatorManager 方法只有在create之前有效
  */
 
-public class BannerViewLayout extends FrameLayout {
+public class Demo extends FrameLayout {
 
     /**
      * 默认将图片集合手动扩容四张图片,配合轮播
      */
-    private final int EXPAND_SOURCE_ALL = 4;
+    private final int EXPAND_SOURCE_ALL = 2;
 
-    /**
-     * 图片集合单侧扩容的数量
-     */
-    private final int EXPAND_SOURCE_ONE_SIDE = 2;
 
     private String mIndicatorTAG = "indicator_container";
 
-    public BannerViewLayout(Context context) {
+    public Demo(Context context) {
         super(context);
         init(context, null);
     }
 
-    public BannerViewLayout(Context context, AttributeSet attrs) {
+    public Demo(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public BannerViewLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public Demo(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
@@ -93,17 +88,17 @@ public class BannerViewLayout extends FrameLayout {
         this.meOnPagerChangeListener = bannerPagerClickListener;
     }
 
-    public BannerViewLayout setViewpagerMargin(int margin) {
+    public Demo setViewpagerMargin(int margin) {
         mViewPager.setPageMargin(margin);
         return this;
     }
 
-    public BannerViewLayout autoPlay(boolean autoPlay) {
+    public Demo autoPlay(boolean autoPlay) {
         isAutoPlay = autoPlay;
         return this;
     }
 
-    public BannerViewLayout setIndicator(IBaseIndicator baseIndicatorImpl) {
+    public Demo setIndicator(IBaseIndicator baseIndicatorImpl) {
         if (null == baseIndicatorImpl) {
             return this;
         }
@@ -112,56 +107,56 @@ public class BannerViewLayout extends FrameLayout {
         return this;
     }
 
-    public BannerViewLayout setDelayTimeForMillis(long delayTime) {
+    public Demo setDelayTimeForMillis(long delayTime) {
         this.mDelayTime = delayTime;
         return this;
     }
 
-    public BannerViewLayout setDelayTimeForSecond(int second) {
+    public Demo setDelayTimeForSecond(int second) {
         this.mDelayTime = second * 1000;
         return this;
     }
 
-    public BannerViewLayout setImageLoad(IBaseImageLoad mImageLoad) {
+    public Demo setImageLoad(IBaseImageLoad mImageLoad) {
         this.mImageLoad = mImageLoad;
         return this;
     }
 
-    public BannerViewLayout setStartPosition(int startPosition) {
+    public Demo setStartPosition(int startPosition) {
         this.mStartPosition = startPosition + 2;
         return this;
     }
 
-    public BannerViewLayout setScaleType(ImageView.ScaleType scaleType) {
+    public Demo setScaleType(ImageView.ScaleType scaleType) {
         this.mScaleType = scaleType;
         return this;
     }
 
-    public BannerViewLayout setImagRecs(List<Integer> data) {
+    public Demo setImagRecs(List<Integer> data) {
         clearData();
         this.mImagUrls.addAll(data);
         return this;
     }
 
-    public BannerViewLayout setImagUrls(List<?> data) {
+    public Demo setImagUrls(List<?> data) {
         clearData();
         this.mImagUrls.addAll(data);
         return this;
     }
 
-    public BannerViewLayout setViewPagerLayoutParams(LayoutParams layoutParams) {
+    public Demo setViewPagerLayoutParams(LayoutParams layoutParams) {
         layoutParams.gravity = Gravity.CENTER;
         mViewPager.setLayoutParams(layoutParams);
         return this;
     }
 
-    public BannerViewLayout addPagerTransformer(ABaseTransformer transformer) {
+    public Demo addPagerTransformer(ABaseTransformer transformer) {
         mViewPager.setPageTransformer(true, transformer);
         return this;
     }
 
-    public BannerViewLayout setOffscreenPageLimit(int limit) {
-        mOffscreenPageLimit = limit + 2;
+    public Demo setOffscreenPageLimit(int limit) {
+        mViewPager.setOffscreenPageLimit(limit+EXPAND_SOURCE_ALL);
         return this;
     }
 
@@ -192,36 +187,37 @@ public class BannerViewLayout extends FrameLayout {
             return;
         }
         mOffscreenPageLimit = imageUrl.size() + EXPAND_SOURCE_ALL;
-        mStartPosition = EXPAND_SOURCE_ONE_SIDE;
+        mViewPager.setOffscreenPageLimit(mOffscreenPageLimit);
+        mStartPosition = 1;
         clearData();
         this.mImagUrls.addAll(imageUrl);
         create();
     }
 
     public void onResume() {
-        startAutoRunning();
+        startAutoRuning();
     }
 
     public void onStop() {
-        stopAutoRunnging();
+        stopAutoRunging();
     }
 
 
     private void clearData() {
-        stopAutoRunnging();
+        stopAutoRunging();
         this.mViews.clear();
         this.mImagUrls.clear();
         this.mCount = -1;
     }
 
-    private void startAutoRunning() {
+    private void startAutoRuning() {
         if (isAutoPlay) {
             mHandler.removeCallbacks(mRunnable);
             mHandler.postDelayed(mRunnable, mDelayTime);
         }
     }
 
-    private void stopAutoRunnging() {
+    private void stopAutoRunging() {
         if (isAutoPlay) {
             mHandler.removeCallbacks(mRunnable);
         }
@@ -235,7 +231,7 @@ public class BannerViewLayout extends FrameLayout {
         setImageData(mImagUrls);
         setViewPagerData();
         if (isResetData) {
-            startAutoRunning();
+            startAutoRuning();
         }
     }
 
@@ -279,15 +275,11 @@ public class BannerViewLayout extends FrameLayout {
             //在数据源首位都重复添加两张图片,优化连贯自动轮播效果
             if (i == 0) {
                 //最后一张图片
-                url = data.get(data.size() - EXPAND_SOURCE_ONE_SIDE);
-            } else if (i == 1) {
                 url = data.get(data.size() - 1);
-            } else if (i == mCount + EXPAND_SOURCE_ONE_SIDE) {
+            } else if (i == 1 || i == (mCount + 1)) {
                 url = data.get(0);
-            } else if (i == mCount + 3) {
-                url = data.get(1);
             } else {
-                url = data.get(i - EXPAND_SOURCE_ONE_SIDE);
+                url = data.get(i - 1);
             }
             if (null != url) {
                 //网络图片
@@ -312,7 +304,6 @@ public class BannerViewLayout extends FrameLayout {
         }
         mViewPager.setAdapter(mImageAdapter);
         mViewPager.setCurrentItem(mStartPosition);
-        mViewPager.setOffscreenPageLimit(mOffscreenPageLimit);
         mViewPager.setFocusable(true);
         if (mUserIndicator) {
             int realPosition = getRealPosition(mStartPosition);
@@ -325,7 +316,7 @@ public class BannerViewLayout extends FrameLayout {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                int realPosition = position - EXPAND_SOURCE_ONE_SIDE;
+                int realPosition = position - 1;
                 //总会先走一次
                 if (hasWindowFocus() && meOnPagerChangeListener != null) {
                     meOnPagerChangeListener.onPageScrolled(realPosition, positionOffset, positionOffsetPixels);
@@ -355,23 +346,23 @@ public class BannerViewLayout extends FrameLayout {
                 }
             }
 
-            /**
-             *  <p>
-             *     B C A B C A B
-             *     0 1 2 3 4 5 6
-             * @param state
-             */
             @Override
             public void onPageScrollStateChanged(int state) {
                 switch (state) {
                     //滑动停止
                     case ViewPager.SCROLL_STATE_IDLE:
+                        if (mCurrentPosition == 0) {
+                            mViewPager.setCurrentItem(mCount, false);
+                        } else if (mCurrentPosition == mCount + 1) {
+                            mViewPager.setCurrentItem(1, false);
+                        }
+                        break;
                     //开始拖拽
                     case ViewPager.SCROLL_STATE_DRAGGING:
-                        if (mCurrentPosition == (mCount + EXPAND_SOURCE_ONE_SIDE)) {
-                            mViewPager.setCurrentItem(mStartPosition, false);
-                        } else if (mCurrentPosition == 1) {
-                            mViewPager.setCurrentItem(mCount + 1, false);
+                        if (mCurrentPosition == mCount + 1) {
+                            mViewPager.setCurrentItem(1, false);
+                        } else if (mCurrentPosition == 0) {
+                            mViewPager.setCurrentItem(mCount, false);
                         }
                         break;
                     //SCROLL_STATE_SETTLING
@@ -389,7 +380,7 @@ public class BannerViewLayout extends FrameLayout {
     }
 
     private int getRealPosition(int position) {
-        int realPosition = (position - EXPAND_SOURCE_ONE_SIDE) % mCount;
+        int realPosition = (position - 1) % mCount;
         if (realPosition < 0) {
             realPosition += mCount;
         }
@@ -400,9 +391,9 @@ public class BannerViewLayout extends FrameLayout {
         @Override
         public void run() {
             if (mCount > 1 && isAutoPlay) {
-                mCurrentPosition = mCurrentPosition % (mCount + EXPAND_SOURCE_ONE_SIDE) + 1;
+                mCurrentPosition = mCurrentPosition % (mCount+1) + 1;
                 if (mCurrentPosition == 1) {
-                    mViewPager.setCurrentItem(EXPAND_SOURCE_ONE_SIDE, false);
+                    mViewPager.setCurrentItem(mCurrentPosition, false);
                     mHandler.post(mRunnable);
                 } else {
                     mViewPager.setCurrentItem(mCurrentPosition);
@@ -422,13 +413,14 @@ public class BannerViewLayout extends FrameLayout {
         public Object instantiateItem(ViewGroup container, int position) {
             View view = mViews.get(position);
             container.addView(view);
-            int realPosition = (position - EXPAND_SOURCE_ONE_SIDE) % mCount;
+            int realPosition = (position - 1) % mCount;
             mImageLoad.clickListener(view, realPosition, mBannerPagerClickListener);
             return view;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
+            Log.e("cc.wang", "ImageAdapter.destroyItem." + position);
             container.removeView((View) object);
         }
 
@@ -445,9 +437,9 @@ public class BannerViewLayout extends FrameLayout {
             int action = ev.getAction();
             if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
                     || action == MotionEvent.ACTION_OUTSIDE) {
-                startAutoRunning();
+                startAutoRuning();
             } else if (action == MotionEvent.ACTION_DOWN) {
-                stopAutoRunnging();
+                stopAutoRunging();
             }
         }
         return super.dispatchTouchEvent(ev);

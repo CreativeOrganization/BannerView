@@ -32,16 +32,16 @@ public class MainActivity extends AppCompatActivity {
         imageurls.add("http://img.zcool.cn/community/038c0ee5744f9a500000025ae5acd2a.jpg");
         imageurls.add("http://imgstore.cdn.sogou.com/app/a/100540002/402468.jpg");
         imageurls.add("http://pic21.photophoto.cn/20111106/0020032891433708_b.jpg");
-        imageurls.add("http://pic1.win4000.com/wallpaper/d/57a9a2955d281.jpg");
-        imageurls.add("http://imgsrc.baidu.com/imgad/pic/item/0bd162d9f2d3572c25e340088013632763d0c3e5.jpg");
+//        imageurls.add("http://pic1.win4000.com/wallpaper/d/57a9a2955d281.jpg");
+//        imageurls.add("http://imgsrc.baidu.com/imgad/pic/item/0bd162d9f2d3572c25e340088013632763d0c3e5.jpg");
 
         recLists = new ArrayList<>();
 
         recLists.add(R.mipmap.timg);
         recLists.add(R.mipmap.b);
         recLists.add(R.mipmap.c);
-        recLists.add(R.mipmap.d);
-        recLists.add(R.mipmap.f);
+//        recLists.add(R.mipmap.d);
+//        recLists.add(R.mipmap.f);
 
 
         initBannerView(recLists);
@@ -68,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 .setStartPosition(0)
                 .setIndicator(new BannerIndicatorManagerImpl())
                 .setImagUrls(imageurls)
-                .autoPlay(false)
+                .setOffscreenPageLimit(imageurls.size())
+                .autoPlay(true)
                 .setDelayTimeForMillis(2000)
                 .create();
 

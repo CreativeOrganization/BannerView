@@ -2,6 +2,7 @@ package cn.example.wang.bannermodule;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,26 +28,26 @@ public class BannerImageLoadImpl implements IBaseImageLoad {
     }
 
     @Override
-    public void  loadImgForNet(Context context, ImageView imageView, String url) {
-        if(!TextUtils.isEmpty(url)) {
+    public void loadImgForNet(Context context, ImageView imageView, String url) {
+        if (!TextUtils.isEmpty(url)) {
             Glide.with(context.getApplicationContext()).load(url).dontAnimate().into(imageView);
         }
     }
 
     @Override
-    public void  loadImgFoeRes(Context context, ImageView imageView, int res) {
-          imageView.setImageResource(res);
+    public void loadImgFoeRes(Context context, ImageView imageView, int res) {
+        imageView.setImageResource(res);
     }
 
     @Override
-    public void clickListener(final View view, final int index , final BannerPagerClickListener bannerPagerClickListener) {
-        if(null == view || null == bannerPagerClickListener || index < 0){
+    public void clickListener(final View view, final int index, final BannerPagerClickListener bannerPagerClickListener) {
+        if (null == view || null == bannerPagerClickListener || index < 0) {
             return;
         }
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bannerPagerClickListener.pagerClickListener(view,index);
+                bannerPagerClickListener.pagerClickListener(view, index);
             }
         });
     }
