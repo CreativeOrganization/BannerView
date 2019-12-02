@@ -1,4 +1,4 @@
-package cn.example.wang.bannermodule;
+package cn.example.wang.bannerviewdemo.banner;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,8 +22,8 @@ public class BannerIndicatorManagerImpl implements IBaseIndicator {
     private ViewGroup mIndicatorContainer;
 
     private void initRec(Context context, ViewGroup parent) {
-        mDefaultDrawable = context.getResources().getDrawable(R.drawable.bg_circle);
-        mSelectedDrawable = context.getResources().getDrawable(R.drawable.bg_circle_red);
+        mDefaultDrawable = context.getResources().getDrawable(cn.example.wang.bannermodule.R.drawable.bg_circle);
+        mSelectedDrawable = context.getResources().getDrawable(cn.example.wang.bannermodule.R.drawable.bg_circle_red);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BannerIndicatorManagerImpl implements IBaseIndicator {
     }
 
     public View defaultIndicatorLayout(ViewGroup parent) {
-        return inflater.inflate(R.layout.layout_indicator_default, parent, false);
+        return inflater.inflate(cn.example.wang.bannermodule.R.layout.layout_indicator_default, parent, false);
     }
 
 }

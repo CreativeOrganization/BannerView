@@ -1,4 +1,4 @@
-package cn.example.wang.bannermodule;
+package cn.example.wang.bannerviewdemo.banner;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -23,7 +23,7 @@ public class BannerImageLoadImpl implements IBaseImageLoad {
 
     @Override
     public View createImageView(Context context, ViewGroup parent, ImageView.ScaleType scaleType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_imageview, parent, false);
+        View view = LayoutInflater.from(context).inflate(cn.example.wang.bannermodule.R.layout.layout_imageview, parent, false);
         return view;
     }
 

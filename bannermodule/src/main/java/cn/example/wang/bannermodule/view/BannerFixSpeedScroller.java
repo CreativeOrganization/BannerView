@@ -1,16 +1,18 @@
-package cn.example.wang.bannermodule;
+package cn.example.wang.bannermodule.view;
 
 import android.content.Context;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 /**
- * Created by WANG on 2018/5/31.
+ *
+ * @author WANG
+ * @date 2018/5/31
  */
 
 public class BannerFixSpeedScroller extends Scroller {
 
-    public int mDuration = BannerConstant.DURATION;
+    public final static int DURATION = 500;
 
     public BannerFixSpeedScroller(Context context) {
         super(context);
@@ -26,18 +28,14 @@ public class BannerFixSpeedScroller extends Scroller {
 
     @Override
     public void startScroll(int startX, int startY, int dx, int dy) {
-        super.startScroll(startX, startY, dx, dy,mDuration);
+        super.startScroll(startX, startY, dx, dy,DURATION);
 
     }
 
     @Override
     public void startScroll(int startX, int startY, int dx, int dy, int duration) {
-        super.startScroll(startX, startY, dx, dy, mDuration);
+        super.startScroll(startX, startY, dx, dy, DURATION);
 
-    }
-
-    public void setDuration(int mDuration) {
-        this.mDuration = mDuration;
     }
 
 }

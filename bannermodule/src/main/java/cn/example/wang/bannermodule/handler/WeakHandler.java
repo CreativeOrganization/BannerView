@@ -1,4 +1,4 @@
-package cn.example.wang.bannermodule;
+package cn.example.wang.bannermodule.handler;
 
 /**
  * Created by WANG on 2018/5/21.

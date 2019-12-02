@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.example.wang.bannermodule.BannerImageLoadImpl;
-import cn.example.wang.bannermodule.WeakHandler;
+import cn.example.wang.bannerviewdemo.banner.BannerImageLoadImpl;
+import cn.example.wang.bannermodule.handler.WeakHandler;
 import cn.example.wang.bannermodule.base.IBaseImageLoad;
 import cn.example.wang.bannermodule.base.IBaseIndicator;
 import cn.example.wang.bannermodule.listener.BannerOnPagerChangeListener;

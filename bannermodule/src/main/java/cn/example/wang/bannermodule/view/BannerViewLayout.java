@@ -2,13 +2,11 @@ package cn.example.wang.bannermodule.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,9 +17,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.example.wang.bannermodule.BannerImageLoadImpl;
-import cn.example.wang.bannermodule.R;
-import cn.example.wang.bannermodule.WeakHandler;
+import cn.example.wang.bannermodule.handler.WeakHandler;
 import cn.example.wang.bannermodule.base.IBaseImageLoad;
 import cn.example.wang.bannermodule.base.IBaseIndicator;
 import cn.example.wang.bannermodule.listener.BannerOnPagerChangeListener;
@@ -165,10 +161,6 @@ public class BannerViewLayout extends FrameLayout {
         return this;
     }
 
-    private IBaseImageLoad getImageLoad() {
-        return new BannerImageLoadImpl();
-    }
-
     private void init(Context context, AttributeSet attrs) {
         initViews(context);
     }
@@ -187,6 +179,7 @@ public class BannerViewLayout extends FrameLayout {
         }
     }
 
+    @Deprecated
     public void reset(List<String> imageUrl) {
         if (null == imageUrl) {
             return;
@@ -259,16 +252,13 @@ public class BannerViewLayout extends FrameLayout {
 
     private void setImageData(List<Object> data) {
         mCount = data.size();
-        if (mCount <= 0) {
+        if (mCount <= 0 || null == mImageLoad) {
             return;
         }
         if (mUserIndicator) {
             mBaseIndicator.viewCount(mCount);
         }
         for (int i = 0; i < mCount + EXPAND_SOURCE_ALL; i++) {
-            if (null == mImageLoad) {
-                mImageLoad = getImageLoad();
-            }
             ViewGroup view = (ViewGroup) mImageLoad.createImageView(getContext(), this, mScaleType);
             View child = view.getChildAt(0);
             if (null != child && !(child instanceof ImageView)) {
