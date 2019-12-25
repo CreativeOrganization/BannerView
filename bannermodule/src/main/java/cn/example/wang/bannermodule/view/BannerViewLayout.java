@@ -33,18 +33,6 @@ import cn.example.wang.bannermodule.transformer.ABaseTransformer;
 
 public class BannerViewLayout extends FrameLayout {
 
-    /**
-     * 默认将图片集合手动扩容四张图片,配合轮播
-     */
-    private final int EXPAND_SOURCE_ALL = 4;
-
-    /**
-     * 图片集合单侧扩容的数量
-     */
-    private final int EXPAND_SOURCE_ONE_SIDE = 2;
-
-    private String mIndicatorTAG = "indicator_container";
-
     public BannerViewLayout(Context context) {
         super(context);
         init(context, null);
@@ -60,26 +48,113 @@ public class BannerViewLayout extends FrameLayout {
         init(context, attrs);
     }
 
-    private BannerViewPager mViewPager;
-    private List<Object> mImagUrls;
-    private List<View> mViews;
-    private IBaseImageLoad mImageLoad;
-    private ImageView.ScaleType mScaleType = ImageView.ScaleType.CENTER_CROP;
-    private ImageAdapter mImageAdapter;
-    private int mCount;
-    private volatile int mCurrentPosition = 1;
-    private int mStartPosition = 2;
-    private boolean isAutoPlay = true;
-    private volatile long mDelayTime = 2000;
-    private boolean isResetData = false;
-    private WeakHandler mHandler = new WeakHandler();
-    private BannerPagerClickListener mBannerPagerClickListener;
-    private BannerOnPagerChangeListener meOnPagerChangeListener;
-    private int mPrePosition = -1;
-    private int mOffscreenPageLimit;
-    private IBaseIndicator mBaseIndicator;
-    private boolean mUserIndicator = false;
+    /**
+     * 默认将图片集合手动扩容四张图片,配合轮播
+     */
+    private final int EXPAND_SOURCE_ALL = 4;
 
+    /**
+     * 图片集合单侧扩容的数量
+     */
+    private final int EXPAND_SOURCE_ONE_SIDE = 2;
+
+    /**
+     * 获取布局下显示指示器的布局容器，你可以随意的放置该布局的位置，但是tag必须加上。
+     */
+    private String mIndicatorTAG = "indicator_container";
+
+    /**
+     * 可以控制滑动速度的ViewPager。
+     * {@link BannerViewPager}
+     */
+    private BannerViewPager mViewPager;
+
+    /**
+     * 缓存轮播图片的数据，可以是网络图片或者是资源id。
+     */
+    private List<Object> mImagUrls;
+
+    /**
+     * 设置给ViewPager的数据。
+     */
+    private List<View> mViews;
+
+    /**
+     * 你可以实现{@link IBaseImageLoad}接口并且实现你自己的图片加载方法。
+     * 有时间再优化。。。
+     */
+    private IBaseImageLoad mImageLoad;
+
+    /**
+     * 默认ImageView的裁剪类型。
+     */
+    private ImageView.ScaleType mScaleType = ImageView.ScaleType.CENTER_CROP;
+
+    /**
+     * ImageAdapter。
+     */
+    private ImageAdapter mImageAdapter;
+
+    /**
+     * 轮播数据的数量，不包括为了实现了轮播而添加的四个View。
+     */
+    private int mCount;
+
+    /**
+     * ViewPager当时所展示的界面的position，这并不是真正能用的position。
+     * 因为里面还包含了为了实现轮播而添加的四个View。
+     */
+    private volatile int mCurrentPosition = 1;
+
+    /**
+     * ViewPager默认展示的界面下标。
+     */
+    private int mStartPosition = 2;
+
+    /**
+     * 是否自动轮播。
+     */
+    private boolean isAutoPlay = true;
+
+    /**
+     * 自动轮播的延迟时间。
+     */
+    private volatile long mDelayTime = 2000;
+
+    /**
+     * 是否重置了数据。数据的更新需要重新调试。
+     */
+    private boolean isResetData = false;
+
+    /**
+     * 自动轮播的Handler。
+     */
+    private WeakHandler mHandler = new WeakHandler();
+
+    /**
+     * 轮播View被点击之后的回调。
+     */
+    private BannerPagerClickListener mBannerPagerClickListener;
+
+    /**
+     * 监听界面的切换。
+     */
+    private BannerOnPagerChangeListener meOnPagerChangeListener;
+
+    /**
+     * 这个是为了重置指示器的状态。
+     */
+    private int mPrePosition = -1;
+
+    /**
+     * ViewPager的缓存界面个数，画廊模式所有界面必须要全部缓存。
+     */
+    private int mOffscreenPageLimit;
+
+    /**
+     * 提供给外界的指示器接口，可以自己定制指示器的样式。
+     */
+    private IBaseIndicator mBaseIndicator;
 
     public void setBannerPagerClickListener(BannerPagerClickListener bannerPagerClickListener) {
         this.mBannerPagerClickListener = bannerPagerClickListener;
@@ -103,7 +178,6 @@ public class BannerViewLayout extends FrameLayout {
         if (null == baseIndicatorImpl) {
             return this;
         }
-        this.mUserIndicator = true;
         this.mBaseIndicator = baseIndicatorImpl;
         return this;
     }
@@ -233,18 +307,15 @@ public class BannerViewLayout extends FrameLayout {
     }
 
     private void initIndicator() {
-        if (!mUserIndicator) {
+        if (null == mBaseIndicator) {
             return;
         }
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             String tag = (String) child.getTag();
             if (!TextUtils.isEmpty(tag) && mIndicatorTAG.equals(tag) && child instanceof ViewGroup) {
-                mUserIndicator = true;
                 mBaseIndicator.attachBannerView((ViewGroup) child);
                 return;
-            } else {
-                mUserIndicator = false;
             }
         }
     }
@@ -255,7 +326,7 @@ public class BannerViewLayout extends FrameLayout {
         if (mCount <= 0 || null == mImageLoad) {
             return;
         }
-        if (mUserIndicator) {
+        if (null != mBaseIndicator) {
             mBaseIndicator.viewCount(mCount);
         }
         for (int i = 0; i < mCount + EXPAND_SOURCE_ALL; i++) {
@@ -304,7 +375,7 @@ public class BannerViewLayout extends FrameLayout {
         mViewPager.setCurrentItem(mStartPosition);
         mViewPager.setOffscreenPageLimit(mOffscreenPageLimit);
         mViewPager.setFocusable(true);
-        if (mUserIndicator) {
+        if (null != mBaseIndicator) {
             int realPosition = getRealPosition(mStartPosition);
             mBaseIndicator.currentSelectedPage(realPosition);
             mPrePosition = realPosition;
@@ -333,7 +404,7 @@ public class BannerViewLayout extends FrameLayout {
                 if (realPosition == mPrePosition) {
                     return;
                 }
-                if (mUserIndicator) {
+                if (null != mBaseIndicator) {
                     if (mPrePosition >= 0) {
                         mBaseIndicator.preSelectedPage(mPrePosition);
                     }
@@ -356,7 +427,7 @@ public class BannerViewLayout extends FrameLayout {
                 switch (state) {
                     //滑动停止
                     case ViewPager.SCROLL_STATE_IDLE:
-                    //开始拖拽
+                        //开始拖拽
                     case ViewPager.SCROLL_STATE_DRAGGING:
                         if (mCurrentPosition == (mCount + EXPAND_SOURCE_ONE_SIDE)) {
                             mViewPager.setCurrentItem(mStartPosition, false);
